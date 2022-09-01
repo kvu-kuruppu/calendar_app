@@ -40,4 +40,17 @@ class DBHelper {
     devtools.log('Insert func called');
     return await _db?.insert(_tableName, task!.toJson()) ?? 1;
   }
+
+  static Future<List<Map<String, dynamic>>> query() async {
+    devtools.log('Query func called');
+    return await _db!.query(_tableName);
+  }
+
+  static delete(Task task) async {
+    return await _db!.delete(
+      _tableName,
+      where: 'id=?',
+      whereArgs: [task.id],
+    );
+  }
 }

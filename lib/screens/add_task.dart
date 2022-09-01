@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calendar_app/consts/routes.dart';
 import 'package:calendar_app/controller/task_controller.dart';
 import 'package:calendar_app/models/task.dart';
@@ -18,8 +20,8 @@ class AddTaskView extends StatefulWidget {
 
 class _AddTaskViewState extends State<AddTaskView> {
   final TaskController _taskController = Get.put(TaskController());
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _noteController = TextEditingController();
   DateTime _selectDate = DateTime.now();
   TimeOfDay _endTime = TimeOfDay.now();
   TimeOfDay _startTime = TimeOfDay.now();
@@ -39,6 +41,13 @@ class _AddTaskViewState extends State<AddTaskView> {
   ];
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 202, 202, 202),
@@ -46,12 +55,13 @@ class _AddTaskViewState extends State<AddTaskView> {
         preferredSize: const Size.fromHeight(30),
         child: AppBar(
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
           backgroundColor: const Color.fromARGB(255, 202, 202, 202),
           elevation: 0,
           toolbarHeight: kToolbarHeight,
@@ -202,7 +212,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 // hint: '${_selectRepeat} min early',
                 hint: _selectRepeat,
                 widget: DropdownButton(
-                  dropdownColor: Color.fromARGB(255, 202, 202, 202),
+                  dropdownColor: const Color.fromARGB(255, 202, 202, 202),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Color.fromARGB(255, 94, 93, 93),
@@ -229,7 +239,19 @@ class _AddTaskViewState extends State<AddTaskView> {
                     // Create Task
                     label: 'Create Task',
                     onPressed: () {
-                      _addTaskToDb();
+                      if (_noteController.text.isNotEmpty &&
+                          _titleController.text.isNotEmpty) {
+                        Timer(
+                          const Duration(seconds: 1),
+                          () {
+                            Navigator.of(context).pop();
+                          },
+                        );
+                        _addTaskToDb();
+                        _taskController.getTasks();
+                      } else {
+                        showErrorDialog(context, 'All fields  are required');
+                      }
                     },
                   ),
                 ],
