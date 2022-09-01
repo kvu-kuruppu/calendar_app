@@ -1,9 +1,11 @@
 import 'package:calendar_app/consts/routes.dart';
+import 'package:calendar_app/utils/show_error_dialog.dart';
 import 'package:calendar_app/widgets/button.dart';
 import 'package:calendar_app/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer' as devtools show log;
+import 'package:get/get.dart';
 
 class AddTaskView extends StatefulWidget {
   const AddTaskView({Key? key}) : super(key: key);
@@ -39,6 +41,13 @@ class _AddTaskViewState extends State<AddTaskView> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(30),
         child: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           backgroundColor: const Color.fromARGB(255, 202, 202, 202),
           elevation: 0,
           toolbarHeight: kToolbarHeight,
@@ -63,13 +72,15 @@ class _AddTaskViewState extends State<AddTaskView> {
               const SizedBox(
                 height: 20,
               ),
-              const InputField(
+              InputField(
                 title: 'Title',
                 hint: 'Enter your title',
+                controller: _titleController,
               ),
-              const InputField(
+              InputField(
                 title: 'Note',
                 hint: 'Enter your note',
+                controller: _noteController,
               ),
               InputField(
                 title: 'Date',
@@ -154,7 +165,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 title: 'Remind',
                 hint: '${_selectReminder} min early',
                 widget: DropdownButton(
-                  dropdownColor: Color.fromARGB(255, 202, 202, 202),
+                  dropdownColor: const Color.fromARGB(255, 202, 202, 202),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Color.fromARGB(255, 94, 93, 93),
