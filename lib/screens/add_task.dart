@@ -1,4 +1,6 @@
 import 'package:calendar_app/consts/routes.dart';
+import 'package:calendar_app/controller/task_controller.dart';
+import 'package:calendar_app/models/task.dart';
 import 'package:calendar_app/utils/show_error_dialog.dart';
 import 'package:calendar_app/widgets/button.dart';
 import 'package:calendar_app/widgets/input_field.dart';
@@ -15,10 +17,12 @@ class AddTaskView extends StatefulWidget {
 }
 
 class _AddTaskViewState extends State<AddTaskView> {
+  final TaskController _taskController = Get.put(TaskController());
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   DateTime _selectDate = DateTime.now();
-  TimeOfDay _selectTime = TimeOfDay.now();
+  TimeOfDay _endTime = TimeOfDay.now();
+  TimeOfDay _startTime = TimeOfDay.now();
   int _selectReminder = 5;
   List<int> remindList = [
     5,
@@ -39,7 +43,7 @@ class _AddTaskViewState extends State<AddTaskView> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 202, 202, 202),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(30),
+        preferredSize: const Size.fromHeight(30),
         child: AppBar(
           leading: IconButton(
             icon: const Icon(
@@ -63,6 +67,7 @@ class _AddTaskViewState extends State<AddTaskView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
+                // Add Task
                 'Add Task',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -73,16 +78,19 @@ class _AddTaskViewState extends State<AddTaskView> {
                 height: 20,
               ),
               InputField(
+                // Title
                 title: 'Title',
                 hint: 'Enter your title',
                 controller: _titleController,
               ),
               InputField(
+                // Note
                 title: 'Note',
                 hint: 'Enter your note',
                 controller: _noteController,
               ),
               InputField(
+                // Date
                 title: 'Date',
                 hint: DateFormat.yMd().format(_selectDate),
                 widget: IconButton(
@@ -111,8 +119,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                 children: [
                   Expanded(
                     child: InputField(
+                      // Start Time
                       title: 'Start Time',
-                      hint: _selectTime.format(context),
+                      hint: _startTime.format(context),
                       widget: IconButton(
                         onPressed: () async {
                           TimeOfDay? _pickTime = await showTimePicker(
@@ -121,7 +130,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                           );
                           if (_pickTime != null) {
                             setState(() {
-                              _selectTime = _pickTime;
+                              _startTime = _pickTime;
                             });
                           } else {
                             devtools.log('Time is not selected');
@@ -136,8 +145,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                   ),
                   Expanded(
                     child: InputField(
+                      // End Time
                       title: 'End Time',
-                      hint: _selectTime.format(context),
+                      hint: _endTime.format(context),
                       widget: IconButton(
                         onPressed: () async {
                           TimeOfDay? _pickTime = await showTimePicker(
@@ -146,7 +156,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                           );
                           if (_pickTime != null) {
                             setState(() {
-                              _selectTime = _pickTime;
+                              _endTime = _pickTime;
                             });
                           } else {
                             devtools.log('Time is not selected');
@@ -162,6 +172,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 ],
               ),
               InputField(
+                // Remind
                 title: 'Remind',
                 hint: '${_selectReminder} min early',
                 widget: DropdownButton(
@@ -186,6 +197,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 ),
               ),
               InputField(
+                // Repeat
                 title: 'Repeat',
                 // hint: '${_selectRepeat} min early',
                 hint: _selectRepeat,
@@ -214,8 +226,11 @@ class _AddTaskViewState extends State<AddTaskView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MyButton(
+                    // Create Task
                     label: 'Create Task',
-                    onPressed: () {},
+                    onPressed: () {
+                      _addTaskToDb();
+                    },
                   ),
                 ],
               ),
@@ -224,5 +239,21 @@ class _AddTaskViewState extends State<AddTaskView> {
         ),
       ),
     );
+  }
+
+  _addTaskToDb() async {
+    int value = await _taskController.addTask(
+      task: Task(
+        note: _noteController.text,
+        title: _titleController.text,
+        date: DateFormat.yMd().format(_selectDate),
+        startTime: _startTime.format(context),
+        endTime: _endTime.format(context),
+        remind: _selectReminder,
+        repeat: _selectRepeat,
+        isCompleted: 0,
+      ),
+    );
+    devtools.log(value.toString());
   }
 }
