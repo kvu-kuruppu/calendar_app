@@ -1,9 +1,13 @@
 import 'package:calendar_app/consts/routes.dart';
 import 'package:calendar_app/controller/task_controller.dart';
+import 'package:calendar_app/models/task.dart';
 import 'package:calendar_app/services/notification_service.dart';
+import 'package:calendar_app/utils/show_error_dialog.dart';
 import 'package:calendar_app/widgets/button.dart';
+import 'package:calendar_app/widgets/task_tile.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer' as devtools show log;
 import 'package:get/get.dart';
@@ -143,14 +147,24 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: _taskController.taskList.length,
             itemBuilder: (_, index) {
-              devtools.log(_taskController.taskList.length.toString());
-              return Container(
-                margin: const EdgeInsets.all(10),
-                width: 100,
-                height: 50,
-                color: Colors.red[300],
-                child: Text(
-                  _taskController.taskList[index].note.toString(),
+              // devtools.log(_taskController.taskList.length.toString());
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _showSimpleDialog(index);
+                          },
+                          child: TaskTile(
+                            _taskController.taskList[index],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             },
@@ -158,5 +172,80 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+
+  Future<void> _showSimpleDialog(index) async {
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: const Text(
+              'Are you sure want to delete?',
+              textAlign: TextAlign.center,
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20.0),
+              ),
+            ),
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Delete Button
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.red,
+                    ),
+                    child: SimpleDialogOption(
+                      onPressed: () async {
+                        await _taskController
+                            .deleteTasks(_taskController.taskList[index])
+                            .then(
+                          (value) {
+                            Navigator.of(context).pop();
+                            _taskController.getTasks();
+                            print(value.toString());
+                          },
+                        );
+                      },
+                      child: const Text(
+                        'Delete',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Cancel Button
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.blue,
+                    ),
+                    child: SimpleDialogOption(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Cancel',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

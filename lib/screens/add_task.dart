@@ -25,7 +25,7 @@ class _AddTaskViewState extends State<AddTaskView> {
   DateTime _selectDate = DateTime.now();
   TimeOfDay _endTime = TimeOfDay.now();
   TimeOfDay _startTime = TimeOfDay.now();
-  int _selectReminder = 5;
+  int _selectReminder = 15;
   List<int> remindList = [
     5,
     10,
@@ -209,7 +209,6 @@ class _AddTaskViewState extends State<AddTaskView> {
               InputField(
                 // Repeat
                 title: 'Repeat',
-                // hint: '${_selectRepeat} min early',
                 hint: _selectRepeat,
                 widget: DropdownButton(
                   dropdownColor: const Color.fromARGB(255, 202, 202, 202),
@@ -276,6 +275,6 @@ class _AddTaskViewState extends State<AddTaskView> {
         isCompleted: 0,
       ),
     );
-    devtools.log(value.toString());
+    // devtools.log(value.toString());
   }
 }

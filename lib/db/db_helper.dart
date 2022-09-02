@@ -32,7 +32,7 @@ class DBHelper {
         },
       );
     } catch (e) {
-      devtools.log(e.toString());
+      devtools.log('Error:' + e.toString());
     }
   }
 
@@ -46,7 +46,7 @@ class DBHelper {
     return await _db!.query(_tableName);
   }
 
-  static delete(Task task) async {
+  static Future<int> delete(Task task) async {
     return await _db!.delete(
       _tableName,
       where: 'id=?',

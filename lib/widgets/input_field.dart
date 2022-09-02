@@ -51,8 +51,6 @@ class InputField extends StatelessWidget {
                 Expanded(
                   child: TextField(
                     controller: controller,
-                    // readOnly: widget == null ? false : true,
-                    // autofocus: false,
                     decoration: InputDecoration(
                       hintText: hint,
                       hintStyle: const TextStyle(
