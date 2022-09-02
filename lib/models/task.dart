@@ -7,7 +7,7 @@ class Task {
   String? startTime;
   String? endTime;
   int? color;
-  int? remind;
+  String? remind;
   String? repeat;
 
   Task({

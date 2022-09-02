@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:calendar_app/consts/routes.dart';
 import 'package:calendar_app/controller/task_controller.dart';
 import 'package:calendar_app/models/task.dart';
 import 'package:calendar_app/utils/show_error_dialog.dart';
@@ -25,12 +24,13 @@ class _AddTaskViewState extends State<AddTaskView> {
   DateTime _selectDate = DateTime.now();
   TimeOfDay _endTime = TimeOfDay.now();
   TimeOfDay _startTime = TimeOfDay.now();
-  int _selectReminder = 15;
-  List<int> remindList = [
-    5,
-    10,
-    15,
-    20,
+  // String _endTimee = '9:30 PM';
+  // String _startTimee = DateFormat('hh:mm a').format(DateTime.now()).toString();
+  String _selectReminder = '15 min before';
+  List<String> remindList = [
+    '15 min before',
+    '1 hour before',
+    '1 day before',
   ];
   String _selectRepeat = 'None';
   List<String> repeatList = [
@@ -76,8 +76,8 @@ class _AddTaskViewState extends State<AddTaskView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Add Task
               const Text(
-                // Add Task
                 'Add Task',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -87,20 +87,20 @@ class _AddTaskViewState extends State<AddTaskView> {
               const SizedBox(
                 height: 20,
               ),
+              // Title
               InputField(
-                // Title
                 title: 'Title',
                 hint: 'Enter your title',
                 controller: _titleController,
               ),
+              // Note
               InputField(
-                // Note
                 title: 'Note',
                 hint: 'Enter your note',
                 controller: _noteController,
               ),
+              // Date
               InputField(
-                // Date
                 title: 'Date',
                 hint: DateFormat.yMd().format(_selectDate),
                 widget: IconButton(
@@ -127,12 +127,16 @@ class _AddTaskViewState extends State<AddTaskView> {
               ),
               Row(
                 children: [
+                  // Start Time
                   Expanded(
                     child: InputField(
-                      // Start Time
                       title: 'Start Time',
                       hint: _startTime.format(context),
+                      // hint: _startTimee,
                       widget: IconButton(
+                        // onPressed: () {
+                        //   _getTimeFromUser(isStartTime: true);
+                        // },
                         onPressed: () async {
                           TimeOfDay? _pickTime = await showTimePicker(
                             context: context,
@@ -153,12 +157,16 @@ class _AddTaskViewState extends State<AddTaskView> {
                       ),
                     ),
                   ),
+                  // End Time
                   Expanded(
                     child: InputField(
-                      // End Time
                       title: 'End Time',
                       hint: _endTime.format(context),
+                      // hint: _endTimee,
                       widget: IconButton(
+                        // onPressed: () {
+                        //   _getTimeFromUser(isStartTime: false);
+                        // },
                         onPressed: () async {
                           TimeOfDay? _pickTime = await showTimePicker(
                             context: context,
@@ -181,10 +189,10 @@ class _AddTaskViewState extends State<AddTaskView> {
                   ),
                 ],
               ),
+              // Remind
               InputField(
-                // Remind
                 title: 'Remind',
-                hint: '${_selectReminder} min early',
+                hint: _selectReminder,
                 widget: DropdownButton(
                   dropdownColor: const Color.fromARGB(255, 202, 202, 202),
                   icon: const Icon(
@@ -192,7 +200,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                     color: Color.fromARGB(255, 94, 93, 93),
                   ),
                   items: remindList.map<DropdownMenuItem<String>>(
-                    (int value) {
+                    (String value) {
                       return DropdownMenuItem<String>(
                         value: value.toString(),
                         child: Text(value.toString()),
@@ -201,13 +209,13 @@ class _AddTaskViewState extends State<AddTaskView> {
                   ).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      _selectReminder = int.parse(newValue!);
+                      _selectReminder = newValue!;
                     });
                   },
                 ),
               ),
+              // Repeat
               InputField(
-                // Repeat
                 title: 'Repeat',
                 hint: _selectRepeat,
                 widget: DropdownButton(
@@ -231,11 +239,11 @@ class _AddTaskViewState extends State<AddTaskView> {
                   },
                 ),
               ),
+              // Create Task
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MyButton(
-                    // Create Task
                     label: 'Create Task',
                     onPressed: () {
                       if (_noteController.text.isNotEmpty &&
@@ -262,6 +270,25 @@ class _AddTaskViewState extends State<AddTaskView> {
     );
   }
 
+  // _getTimeFromUser({required bool isStartTime}) {
+  //   var pickedTime = _showTimePicker();
+  //   String _formattedTime = pickedTime.format(context);
+  //   if (pickedTime == null) {
+  //     print('Time not selected');
+  //   } else if (isStartTime == true) {
+  //     _startTimee = _formattedTime;
+  //   } else if (isStartTime == false) {
+  //     _endTimee = _formattedTime;
+  //   }
+  // }
+
+  _showTimePicker() {
+    return showTimePicker(
+        initialEntryMode: TimePickerEntryMode.input,
+        context: context,
+        initialTime: TimeOfDay(hour: 9, minute: 10));
+  }
+
   _addTaskToDb() async {
     int value = await _taskController.addTask(
       task: Task(
@@ -275,6 +302,5 @@ class _AddTaskViewState extends State<AddTaskView> {
         isCompleted: 0,
       ),
     );
-    // devtools.log(value.toString());
   }
 }

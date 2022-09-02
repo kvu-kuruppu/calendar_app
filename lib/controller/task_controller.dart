@@ -1,7 +1,6 @@
 import 'package:calendar_app/db/db_helper.dart';
 import 'package:calendar_app/models/task.dart';
 import 'package:get/get.dart';
-import 'dart:developer' as devtools show log;
 
 class TaskController extends GetxController {
   @override

@@ -1,14 +1,13 @@
 import 'package:calendar_app/consts/routes.dart';
 import 'package:calendar_app/controller/task_controller.dart';
 import 'package:calendar_app/models/task.dart';
-import 'package:calendar_app/services/notification_service.dart';
+import 'package:calendar_app/utils/holiday_info.dart';
 import 'package:calendar_app/widgets/button.dart';
+import 'package:calendar_app/widgets/holiday_tile.dart';
 import 'package:calendar_app/widgets/task_tile.dart';
-import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
-import 'dart:developer' as devtools show log;
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -22,43 +21,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime _selectDate = DateTime.now();
   final _taskController = Get.put(TaskController());
-  var notif;
-
-  @override
-  void initState() {
-    super.initState();
-    notif = Notif();
-    notif.initializeNotification();
-    notif.requestIOSPermissions();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 202, 202, 202),
-      // appBar: AppBar(
-      //   backgroundColor: const Color.fromARGB(255, 202, 202, 202),
-      //   elevation: 0,
-      //   actions: [
-      //     IconButton(
-      //       color: Colors.black,
-      //       onPressed: () {
-      //         notif.displayNotification(
-      //           title: 'Hehe',
-      //           body: 'body',
-      //         );
-      //         notif.scheduledNotification();
-      //       },
-      //       icon: const Icon(
-      //         Icons.person,
-      //         size: 15,
-      //       ),
-      //     ),
-      //     const SizedBox(
-      //       width: 10,
-      //     ),
-      //   ],
-      // ),
       body: Column(
         children: [
           Container(
@@ -91,8 +58,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                    // Add Task
                     MyButton(
-                      // Add Task
                       label: '+ Add Task',
                       onPressed: () async {
                         await Navigator.of(context).pushNamed(
@@ -111,7 +78,6 @@ class _HomePageState extends State<HomePage> {
                   view: CalendarView.month,
                   firstDayOfWeek: 1,
                   selectionDecoration: BoxDecoration(
-                    shape: BoxShape.circle,
                     border: Border.all(
                       color: Colors.red,
                       width: 2,
@@ -150,6 +116,41 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Holidays',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          _showHolidays(),
+          const SizedBox(
+            height: 15,
+          ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Tasks',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
           _showTasks(),
         ],
       ),
@@ -162,6 +163,17 @@ class _HomePageState extends State<HomePage> {
       _selectDate = details.date!;
     });
     print(DateFormat.yMd().format(details.date!));
+  }
+
+  _showHolidays() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: holidayList
+            .map((holiday) => HolidayTile(holiday: holiday))
+            .toList(),
+      ),
+    );
   }
 
   _showTasks() {
@@ -216,7 +228,6 @@ class _HomePageState extends State<HomePage> {
               } else {
                 return Container();
               }
-              // devtools.log(_taskController.taskList.length.toString());
             },
           );
         },

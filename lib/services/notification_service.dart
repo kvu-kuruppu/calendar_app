@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_new
 
+import 'package:calendar_app/models/task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -52,7 +53,7 @@ class Notif {
     );
   }
 
-  scheduledNotification() async {
+  scheduledNotification(int hour, int min, Task task) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'scheduled title',

@@ -34,23 +34,50 @@ class TaskTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        color: Colors.black,
-                        size: 18,
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time_rounded,
+                            color: Colors.black,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${task!.startTime} - ${task!.endTime}",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${task!.startTime} - ${task!.endTime}",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "${task!.date}",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.date_range,
+                            color: Colors.black,
+                            size: 18,
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                  // const SizedBox(width: 12),
+                  // Row(
+                  //   children: [
+                  //     Text('sdfdsf'),
+                  //   ],
+                  // ),
                   const SizedBox(height: 12),
                   Text(
                     task?.note ?? "",
@@ -73,9 +100,10 @@ class TaskTile extends StatelessWidget {
               child: Text(
                 "TODO",
                 style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,),
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
           ],
