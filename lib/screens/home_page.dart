@@ -10,6 +10,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,6 +23,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime _selectDate = DateTime.now();
   final _taskController = Get.put(TaskController());
+
+
+  void initialization() async {
+    FlutterNativeSplash.remove();
+  }
 
   @override
   Widget build(BuildContext context) {
